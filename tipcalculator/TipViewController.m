@@ -15,9 +15,12 @@
 @property (weak, nonatomic) IBOutlet UILabel *tipLabel;
 @property (weak, nonatomic) IBOutlet UILabel *totalLabel;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *tipControl;
+@property (weak, nonatomic) IBOutlet UILabel *numGuestsTextField;
+@property (weak, nonatomic) IBOutlet UILabel *splitTextField;
 
 - (IBAction)onTap:(id)sender;
 - (void)updateValue;
+- (void)saveBill;
 
 @end
 
@@ -38,11 +41,13 @@
 }
 
 - (void)viewDidAppear:(BOOL)animated {
-    NSLog(@"view did appear");
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    self.billTextField.text = [defaults objectForKey:@"initialValue"];
-    
+    self.billTextField.text = [defaults objectForKey:@"billValue"];
     [self updateValue];
+}
+
+-(void)viewDidDisappear:(BOOL)animated {
+    [self saveBill];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -52,6 +57,7 @@
 - (IBAction)onTap:(id)sender {
     [self.view endEditing:(YES)];
     [self updateValue];
+    [self saveBill];
 }
 
 - (void)updateValue {
@@ -63,6 +69,17 @@
     
     self.tipLabel.text = [NSString stringWithFormat:@"$%0.2f", tipAmount];
     self.totalLabel.text = [NSString stringWithFormat:@"$%0.2f", totalAmount];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    float guestNum = [[defaults objectForKey:@"defaultGuestNum"] floatValue];
+    self.numGuestsTextField.text = [defaults objectForKey:@"defaultGuestNum"];
+    self.splitTextField.text = [NSString stringWithFormat:@"$%0.2f / Guest", totalAmount/guestNum];
+}
+
+-(void)saveBill {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:self.billTextField.text forKey:@"billValue"];
+    [defaults synchronize];
 }
 
 - (void)onSettingsButton {

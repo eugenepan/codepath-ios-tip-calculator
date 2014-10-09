@@ -10,22 +10,33 @@
 
 @interface SettingsViewController ()
 
-@property (weak, nonatomic) IBOutlet UITextField *initialTextField;
+@property (weak, nonatomic) IBOutlet UITextField *defaultGuestNumTextField;
 
 @end
 
 @implementation SettingsViewController
 
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        self.title =@"Settings";
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
- 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    self.initialTextField.text = [defaults objectForKey:@"initialValue"];
+    NSString *guestNum = [defaults objectForKey:@"defaultGuestNum"];
+    if (guestNum != nil) {
+        self.defaultGuestNumTextField.text = guestNum;
+    }
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:self.initialTextField.text forKey:@"initialValue"];
+    [defaults setObject:self.defaultGuestNumTextField.text forKey:@"defaultGuestNum"];
     [defaults synchronize];
 }
 
